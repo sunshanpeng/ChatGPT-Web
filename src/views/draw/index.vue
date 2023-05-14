@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 11:04:14
- * @LastEditTime: 2023-05-14 17:11:40
+ * @LastEditTime: 2023-05-14 19:00:14
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
@@ -54,11 +54,12 @@ async function onDraw() {
     <Menu />
     <div class="flex items-center">
       <NInput
+      class="mr-3"
         v-model:value="prompt"
         type="textarea"
         placeholder="输入你的创意，如：a cat"
       />
-      <NButton class="ml-5" type="info" @click="handleSubmit" :disabled="prompt === ''">生成</NButton>
+      <NButton  type="info" @click="handleSubmit" :disabled="prompt === ''" :loading="loading">生成</NButton>
     </div>
     <div class="flex mt-5 w-1/4 mx-auto">
             <NImage
