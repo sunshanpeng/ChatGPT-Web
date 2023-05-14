@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 08:51:57
- * @LastEditTime: 2023-05-14 10:41:00
+ * @LastEditTime: 2023-05-14 17:15:13
  * @LastEditors: 孙善鹏
  * @Reference:
  */
@@ -36,7 +36,4 @@ async function midjourneyRequest(prompt: string): Promise<MidjourneyResponse> {
   }
 }
 
-async function main() {
-  const response = await midjourneyRequest('A young and beautiful Chinese female nanny holds baby, green short sleeves, smiling, on a light background, --v 5')
-  console.log(response.image_url)
-}
+export { midjourneyRequest }

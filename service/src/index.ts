@@ -1,7 +1,16 @@
+/*
+ * @Description:
+ * @Author: 孙善鹏
+ * @Date: 2023-05-13 18:48:46
+ * @LastEditTime: 2023-05-14 17:23:03
+ * @LastEditors: 孙善鹏
+ * @Reference:
+ */
 import express from 'express'
 import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
+import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
@@ -49,6 +58,25 @@ router.post('/config', auth, async (req, res) => {
   try {
     const response = await chatConfig()
     res.send(response)
+  }
+  catch (error) {
+    res.send(error)
+  }
+})
+
+router.post('/draw', auth, async (req, res) => {
+  try {
+    const prompt = req.body.prompt?.trim()
+    if (prompt) {
+      console.log(prompt)
+      const data = await midjourneyRequest(prompt)
+      data.status = 'Success'
+      console.log(data)
+      res.send(data)
+    }
+    else {
+      throw new Error('请输入正确的prompt')
+    }
   }
   catch (error) {
     res.send(error)

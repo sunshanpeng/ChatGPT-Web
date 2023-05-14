@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Author: 孙善鹏
+ * @Date: 2023-05-13 18:48:46
+ * @LastEditTime: 2023-05-14 17:09:56
+ * @LastEditors: 孙善鹏
+ * @Reference: 
+ */
 import type { AxiosProgressEvent, AxiosResponse, GenericAbortSignal } from 'axios'
 import request from './axios'
 import { useAuthStore } from '@/store'
