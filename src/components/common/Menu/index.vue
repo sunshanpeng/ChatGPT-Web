@@ -2,12 +2,13 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 12:27:51
- * @LastEditTime: 2023-05-14 14:43:32
+ * @LastEditTime: 2023-05-14 15:18:38
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
 <script lang="ts" setup>
 import type { Component } from 'vue'
+import { RouterLink } from 'vue-router'
 import { h, ref } from 'vue'
 import { NIcon, NMenu, NCard } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
@@ -22,12 +23,30 @@ function renderIcon(icon: Component) {
 
 const menuOptions: MenuOption[] = [
   {
-    label: 'AI聊天',
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: 'Chat',
+          }
+        },
+        { default: () => 'AI聊天' }
+      ),
     key: 'chat',
     icon: renderIcon(Chat),
   },
   {
-    label: 'AI画画',
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: 'Draw',
+          }
+        },
+        { default: () => 'AI画画' }
+      ),
     key: 'draw',
     icon: renderIcon(Draw),
   },

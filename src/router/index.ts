@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Author: 孙善鹏
+ * @Date: 2023-05-13 18:48:46
+ * @LastEditTime: 2023-05-14 14:59:02
+ * @LastEditors: 孙善鹏
+ * @Reference: 
+ */
 import type { App } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
@@ -18,7 +26,11 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-
+  {
+    path: '/draw',
+    name: 'Draw',
+    component: () => import('@/views/draw/index.vue'),
+  },
   {
     path: '/404',
     name: '404',

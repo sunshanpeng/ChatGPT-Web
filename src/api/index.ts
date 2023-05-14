@@ -1,3 +1,11 @@
+/*
+ * @Description: 
+ * @Author: 孙善鹏
+ * @Date: 2023-05-13 18:48:46
+ * @LastEditTime: 2023-05-14 16:34:30
+ * @LastEditors: 孙善鹏
+ * @Reference: 
+ */
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { post } from '@/utils/request'
 import { useAuthStore, useSettingStore } from '@/store'
@@ -62,5 +70,12 @@ export function fetchVerify<T>(token: string) {
   return post<T>({
     url: '/verify',
     data: { token },
+  })
+}
+
+export function fetchDraw<T = any>(prompt:string) {
+  return post<T>({
+    url: '/draw',
+    data: { prompt },
   })
 }
