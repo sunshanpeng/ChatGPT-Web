@@ -1,9 +1,18 @@
+<!--
+ * @Description:
+ * @Author: 孙善鹏
+ * @Date: 2023-05-13 18:48:46
+ * @LastEditTime: 2023-05-14 13:10:08
+ * @LastEditors: 孙善鹏
+ * @Reference:
+-->
 <script setup lang='ts'>
 import { computed } from 'vue'
-import { NLayout, NLayoutContent } from 'naive-ui'
+import { NCard, NLayout, NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 import Permission from './Permission.vue'
+import Menu from '@/components/common/Menu/index.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAppStore, useAuthStore, useChatStore } from '@/store'
 
@@ -36,6 +45,7 @@ const getContainerClass = computed(() => {
 
 <template>
   <div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
+      <Menu />
     <div class="h-full overflow-hidden" :class="getMobileClass">
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
         <Sider />
