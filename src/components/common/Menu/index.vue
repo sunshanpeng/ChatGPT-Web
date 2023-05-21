@@ -10,11 +10,11 @@
 import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
 import { h, ref } from 'vue'
-import { NIcon, NMenu, NCard } from 'naive-ui'
+import { NCard, NIcon, NMenu } from 'naive-ui'
 import type { MenuOption } from 'naive-ui'
 import {
-    ColorPaletteOutline as Draw,
-    ChatboxEllipsesOutline as Chat
+  ChatboxEllipsesOutline as Chat,
+  ColorPaletteOutline as Draw,
 } from '@vicons/ionicons5'
 
 function renderIcon(icon: Component) {
@@ -29,9 +29,9 @@ const menuOptions: MenuOption[] = [
         {
           to: {
             name: 'Chat',
-          }
+          },
         },
-        { default: () => 'AI聊天' }
+        { default: () => 'AI聊天' },
       ),
     key: 'chat',
     icon: renderIcon(Chat),
@@ -43,9 +43,9 @@ const menuOptions: MenuOption[] = [
         {
           to: {
             name: 'Draw',
-          }
+          },
         },
-        { default: () => 'AI画画' }
+        { default: () => 'AI画画' },
       ),
     key: 'draw',
     icon: renderIcon(Draw),
@@ -54,8 +54,8 @@ const menuOptions: MenuOption[] = [
 const activeKey = ref<string | null>(null)
 </script>
 
-<template> 
-<NCard class="flex justify-center items-center pb-1 mb-2" style="--n-padding-bottom:0">
+<template>
+  <NCard class="flex justify-center items-center pb-1 mb-2" style="--n-padding-bottom:0">
     <NMenu v-model:value="activeKey" mode="horizontal" :options="menuOptions" />
-    </NCard>
+  </NCard>
 </template>
