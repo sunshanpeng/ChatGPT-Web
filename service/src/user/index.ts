@@ -47,7 +47,6 @@ export async function login(username: string, password: string): Promise<string>
 }
 
 export async function usageLimit(username: string, usageType: UsageType): Promise<void> {
-  await incrUsage(username, usageType)
   const type = usageType.valueOf()
 
   const [rows] = await (await db).execute(
@@ -55,19 +54,28 @@ export async function usageLimit(username: string, usageType: UsageType): Promis
     [username, type],
   )
   const usage = rows[0]
+  if (!usage)
+    return
+
   console.log(`username: ${username}, usage: ${usage.usage}`)
+  if (usage.usage > usage.limit)
+    throw new Error('Error: 账号额度不够，请充值')
 }
 
 export async function incrUsage(username: string, usageType: UsageType): Promise<void> {
+  let limit = 10000
+  if (usageType !== UsageType.GPT3)
+    limit = 0
+
   const type = usageType.valueOf()
   try {
     await (await db).execute(
       'INSERT INTO t_usage (username, type,`limit`,`usage`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `usage` = `usage` + 1',
-      [username, type, 0, 0],
+      [username, type, limit, 0],
     )
   }
   catch (err) {
     console.error(err)
-    throw new Error('Error: 账号额度不够，请充值 | Registration failed')
+    throw new Error('Error: 账号额度不够，请充值')
   }
 }
