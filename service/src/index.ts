@@ -45,7 +45,7 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       temperature,
       top_p,
     })
-    await incrUsage(req.user.username, UsageType.GPT3)
+    await incrUsage(req.user.username, UsageType.GPT3, prompt)
   }
   catch (error) {
     res.write(JSON.stringify(error))
@@ -75,7 +75,7 @@ router.post('/draw', auth, async (req, res) => {
       data.status = 'Success'
       console.log(data)
       res.send(data)
-      await incrUsage(req.user.username, UsageType.MJ)
+      await incrUsage(req.user.username, UsageType.MJ, prompt)
     }
     else {
       throw new Error('请输入正确的prompt')
