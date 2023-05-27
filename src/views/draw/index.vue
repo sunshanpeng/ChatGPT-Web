@@ -8,7 +8,7 @@
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { NButton, NImage, NInput, NSpin } from 'naive-ui'
+import { NButton, NImage, NInput, NSpin, useMessage } from 'naive-ui'
 import Menu from '@/components/common/Menu/index.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { fetchDraw } from '@/api'
@@ -18,6 +18,7 @@ interface MidjourneyResponse {
   image_url: string
   actions: []
 }
+const ms = useMessage()
 const { isMobile } = useBasicLayout()
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
@@ -40,6 +41,10 @@ async function onDraw() {
     loading.value = true
     midjourney = reactive(midjourneySource())
     const data = await fetchDraw<MidjourneyResponse>(prompt.value)
+    if (data.errorMessage) {
+      ms.error(data.errorMessage)
+      return
+    }
     Object.assign(midjourney, data)
   }
   catch (e) {

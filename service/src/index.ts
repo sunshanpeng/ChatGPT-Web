@@ -68,6 +68,7 @@ router.post('/config', auth, async (req, res) => {
 
 router.post('/draw', auth, async (req, res) => {
   try {
+    usageLimit(req.user.username, UsageType.MJ)
     const prompt = req.body.prompt?.trim()
     if (prompt) {
       console.log(prompt)
@@ -81,7 +82,7 @@ router.post('/draw', auth, async (req, res) => {
     }
   }
   catch (error) {
-    res.send(error)
+    res.send({ status: 'Success', errorMessage: error.message, data: null })
   }
 })
 
