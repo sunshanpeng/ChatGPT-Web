@@ -79,12 +79,12 @@ export async function incrUsage(username: string, usageType: UsageType): Promise
     throw new Error('Error: 服务器异常，请稍后再试')
   }
 }
-export async function promptRecord(username: string, usageType: UsageType, prompt: string, result = ''): Promise<void> {
+export async function promptRecord(username: string, usageType: UsageType, prompt: string, seconds = 0, result = ''): Promise<void> {
   const type = usageType.valueOf()
   try {
     await (await db).execute(
-      'INSERT INTO t_prompt_record (username, type, prompt, result) VALUES (?, ?, ?, ?)',
-      [username, type, prompt, result],
+      'INSERT INTO t_prompt_record (username, type, prompt, seconds, result) VALUES (?, ?, ?, ?, ?)',
+      [username, type, prompt, seconds, result],
     )
   }
   catch (err) {

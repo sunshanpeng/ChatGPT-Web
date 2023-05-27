@@ -45,7 +45,7 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       temperature,
       top_p,
     })
-    await promptRecord(req.user.username, UsageType.MJ, prompt)
+    await promptRecord(req.user.username, UsageType.GPT3, prompt)
     await incrUsage(req.user.username, UsageType.GPT3)
   }
   catch (error) {
@@ -71,14 +71,17 @@ router.post('/draw', auth, async (req, res) => {
     await usageLimit(req.user.username, UsageType.MJ)
     const prompt = req.body.prompt?.trim()
     if (prompt) {
+      const startTime = new Date().getTime()
       const data = await midjourneyRequest(prompt)
-      await promptRecord(req.user.username, UsageType.MJ, prompt, JSON.stringify(data))
+      const endTime = new Date().getTime()
+      const seconds = (endTime - startTime) / 1000
+      await promptRecord(req.user.username, UsageType.MJ, prompt, seconds, JSON.stringify(data))
       if (!data.image_url)
         throw new Error(`画作生成失败:${data.detail}`)
 
+      await incrUsage(req.user.username, UsageType.MJ)
       data.status = 'Success'
       res.send(data)
-      await incrUsage(req.user.username, UsageType.MJ)
     }
     else {
       throw new Error('请输入正确的prompt')
