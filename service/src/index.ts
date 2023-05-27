@@ -13,7 +13,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
-import { UsageType, login, usageLimit } from './user'
+import { UsageType, incrUsage, login, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
 
 const app = express()
@@ -31,9 +31,7 @@ app.all('*', (_, res, next) => {
 
 router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
-
   try {
-    usageLimit(req.user.username, UsageType.GPT3)
     const { prompt, options = {}, systemMessage, temperature, top_p } = req.body as RequestProps
     let firstChunk = true
     await chatReplyProcess({
@@ -47,6 +45,7 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       temperature,
       top_p,
     })
+    await incrUsage(req.user.username, UsageType.GPT3)
   }
   catch (error) {
     res.write(JSON.stringify(error))
@@ -68,7 +67,7 @@ router.post('/config', auth, async (req, res) => {
 
 router.post('/draw', auth, async (req, res) => {
   try {
-    usageLimit(req.user.username, UsageType.MJ)
+    await usageLimit(req.user.username, UsageType.MJ)
     const prompt = req.body.prompt?.trim()
     if (prompt) {
       console.log(prompt)
@@ -76,6 +75,7 @@ router.post('/draw', auth, async (req, res) => {
       data.status = 'Success'
       console.log(data)
       res.send(data)
+      await incrUsage(req.user.username, UsageType.MJ)
     }
     else {
       throw new Error('请输入正确的prompt')
