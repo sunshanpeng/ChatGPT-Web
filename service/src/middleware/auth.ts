@@ -6,7 +6,8 @@ const auth = async (req, res, next) => {
     if (!Authorization)
       throw new Error('Error: 无访问权限 | No access rights')
     const token = Authorization.replace('Bearer ', '').trim()
-    verify(token)
+    const { username } = verify(token)
+    req.user = { username }
     next()
   }
   catch (error) {

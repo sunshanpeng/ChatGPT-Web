@@ -15,7 +15,7 @@ export function sign(username: string): string {
   return token
 }
 
-export function verify(token: string): string | object {
+export function verify(token: string): any {
   try {
     return jwt.verify(token, secret)
   }

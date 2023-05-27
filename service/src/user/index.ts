@@ -2,6 +2,12 @@ import { createConnection } from 'mysql2/promise'
 import bcrypt from 'bcryptjs'
 import { sign } from './jwt'
 
+export enum UsageType {
+  GPT3 = 'gpt3',
+  GPT4 = 'gpt4',
+  MJ = 'mj',
+}
+
 const db = createConnection({
   host: 'localhost',
   user: 'root',
@@ -38,4 +44,30 @@ export async function login(username: string, password: string): Promise<string>
   }
   const token = sign(username)
   return Promise.resolve(token)
+}
+
+export async function usageLimit(username: string, usageType: UsageType): Promise<void> {
+  await incrUsage(username, usageType)
+  const type = usageType.valueOf()
+
+  const [rows] = await (await db).execute(
+    'SELECT * FROM t_usage WHERE username = ? and type = ?',
+    [username, type],
+  )
+  const usage = rows[0]
+  console.log(`username: ${username}, usage: ${usage.usage}`)
+}
+
+export async function incrUsage(username: string, usageType: UsageType): Promise<void> {
+  const type = usageType.valueOf()
+  try {
+    await (await db).execute(
+      'INSERT INTO t_usage (username, type,`limit`,`usage`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `usage` = `usage` + 1',
+      [username, type, 0, 0],
+    )
+  }
+  catch (err) {
+    console.error(err)
+    throw new Error('Error: 账号额度不够，请充值 | Registration failed')
+  }
 }

@@ -8,7 +8,7 @@
 -->
 <script setup lang='ts'>
 import { computed } from 'vue'
-import { NCard, NLayout, NLayoutContent } from 'naive-ui'
+import { NLayout, NLayoutContent } from 'naive-ui'
 import { useRouter } from 'vue-router'
 import Sider from './sider/index.vue'
 import Permission from './Permission.vue'
@@ -45,8 +45,8 @@ const getContainerClass = computed(() => {
 
 <template>
   <div class="h-full dark:bg-[#24272e] transition-all" :class="[isMobile ? 'p-0' : 'p-4']">
-      <Menu />
-    <div class="h-full overflow-hidden" :class="getMobileClass">
+    <Menu />
+    <div class="h-full overflow-hidden pb-10" :class="getMobileClass">
       <NLayout class="z-40 transition" :class="getContainerClass" has-sider>
         <Sider />
         <NLayoutContent class="h-full">

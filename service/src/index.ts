@@ -13,7 +13,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
-import { login } from './user'
+import { UsageType, login, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
 
 const app = express()
@@ -33,6 +33,7 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
+    usageLimit(req.user.username, UsageType.GPT3)
     const { prompt, options = {}, systemMessage, temperature, top_p } = req.body as RequestProps
     let firstChunk = true
     await chatReplyProcess({
