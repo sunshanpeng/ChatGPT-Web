@@ -16,20 +16,26 @@ const authStore = useAuthStore()
 const ms = useMessage()
 
 const loading = ref(false)
+const username = ref('')
+const password = ref('')
 const token = ref('')
 
-const disabled = computed(() => !token.value.trim() || loading.value)
+const disabled = computed(() => !username.value.trim() || !password.value.trim() || loading.value)
 
 async function handleVerify() {
-  const secretKey = token.value.trim()
+  username.value = username.value.trim()
+  password.value = password.value.trim()
 
-  if (!secretKey)
+  if (!username.value || !password.value)
     return
 
   try {
     loading.value = true
-    await fetchVerify(secretKey)
-    authStore.setToken(secretKey)
+    const data = await fetchVerify({
+      username: username.value,
+      password: password.value,
+    })
+    authStore.setToken(data.data)
     ms.success('success')
     window.location.reload()
   }
@@ -60,11 +66,12 @@ function handlePress(event: KeyboardEvent) {
             403
           </h2>
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
-            {{ $t('common.unauthorizedTips') }}
+            未经授权，请先登录(首次登录自动注册)
           </p>
           <Icon403 class="w-[200px] m-auto" />
         </header>
-        <NInput v-model:value="token" type="password" placeholder="" @keypress="handlePress" />
+        <NInput v-model:value="username" placeholder="请输入用户名" @keypress="handlePress" />
+        <NInput v-model:value="password" type="password" placeholder="请输入密码" @keypress="handlePress" />
         <NButton
           block
           type="primary"

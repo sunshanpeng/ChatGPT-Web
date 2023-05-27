@@ -13,6 +13,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
+import { login } from './user'
 import { isNotEmptyString } from './utils/is'
 
 const app = express()
@@ -96,14 +97,14 @@ router.post('/session', async (req, res) => {
 
 router.post('/verify', async (req, res) => {
   try {
-    const { token } = req.body as { token: string }
-    if (!token)
-      throw new Error('Secret key is empty')
+    const { username, password } = req.body as { username: string
+      password: string }
+    if (!username || !password)
+      throw new Error('用户名密码不能为空')
 
-    if (process.env.AUTH_SECRET_KEY !== token)
-      throw new Error('密钥无效 | Secret key is invalid')
+	 const token =	await login(username, password)
 
-    res.send({ status: 'Success', message: 'Verify successfully', data: null })
+    res.send({ status: 'Success', message: 'Verify successfully', data: token })
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
