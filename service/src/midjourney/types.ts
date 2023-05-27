@@ -21,9 +21,17 @@
   ]
 }
  */
-export interface MidjourneyResponse {
+export type MidjourneyResponse = MidjourneySueecssResponse | MidjourneyErrorResponse
+export interface MidjourneySueecssResponse {
   task_id: string
   image_id: string
   image_url: string
   actions: []
+
+}
+
+export interface MidjourneyErrorResponse {
+  detail: string
+  code: string
+  trace_id: string
 }

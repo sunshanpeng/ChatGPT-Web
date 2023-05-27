@@ -13,7 +13,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
-import { UsageType, incrUsage, login, usageLimit } from './user'
+import { UsageType, incrUsage, login, promptRecord, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
 
 const app = express()
@@ -45,7 +45,8 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
       temperature,
       top_p,
     })
-    await incrUsage(req.user.username, UsageType.GPT3, prompt)
+    await promptRecord(req.user.username, UsageType.MJ, prompt)
+    await incrUsage(req.user.username, UsageType.GPT3)
   }
   catch (error) {
     res.write(JSON.stringify(error))
@@ -70,12 +71,14 @@ router.post('/draw', auth, async (req, res) => {
     await usageLimit(req.user.username, UsageType.MJ)
     const prompt = req.body.prompt?.trim()
     if (prompt) {
-      console.log(prompt)
       const data = await midjourneyRequest(prompt)
+      await promptRecord(req.user.username, UsageType.MJ, prompt, JSON.stringify(data))
+      if (!data.image_url)
+        throw new Error(`画作生成失败:${data.detail}`)
+
       data.status = 'Success'
-      console.log(data)
       res.send(data)
-      await incrUsage(req.user.username, UsageType.MJ, prompt)
+      await incrUsage(req.user.username, UsageType.MJ)
     }
     else {
       throw new Error('请输入正确的prompt')

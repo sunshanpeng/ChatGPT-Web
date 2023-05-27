@@ -62,7 +62,7 @@ export async function usageLimit(username: string, usageType: UsageType): Promis
     throw new Error('Error: 账号额度不够，请充值')
 }
 
-export async function incrUsage(username: string, usageType: UsageType, prompt: string): Promise<void> {
+export async function incrUsage(username: string, usageType: UsageType): Promise<void> {
   let limit = 10000
   if (usageType !== UsageType.GPT3)
     limit = 0
@@ -73,13 +73,21 @@ export async function incrUsage(username: string, usageType: UsageType, prompt: 
       'INSERT INTO t_usage (username, type,`limit`,`usage`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `usage` = `usage` + 1',
       [username, type, limit, 0],
     )
-    await (await db).execute(
-      'INSERT INTO t_prompt_record (username, type, prompt) VALUES (?, ?, ?)',
-      [username, type, prompt],
-    )
   }
   catch (err) {
     console.error(err)
     throw new Error('Error: 服务器异常，请稍后再试')
+  }
+}
+export async function promptRecord(username: string, usageType: UsageType, prompt: string, result = ''): Promise<void> {
+  const type = usageType.valueOf()
+  try {
+    await (await db).execute(
+      'INSERT INTO t_prompt_record (username, type, prompt, result) VALUES (?, ?, ?, ?)',
+      [username, type, prompt, result],
+    )
+  }
+  catch (err) {
+    console.error(err)
   }
 }
