@@ -2,16 +2,17 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 11:04:14
- * @LastEditTime: 2023-05-14 20:17:11
+ * @LastEditTime: 2023-05-28 12:24:57
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { NButton, NImage, NInput, NSpin, useMessage } from 'naive-ui'
+import PromptOptimize from './components/PromptOptimize.vue'
 import Menu from '@/components/common/Menu/index.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { fetchDraw } from '@/api'
+import { fetchDraw, mjOptimize } from '@/api'
 interface MidjourneyResponse {
   task_id: string
   image_id: string
@@ -21,7 +22,10 @@ interface MidjourneyResponse {
 const ms = useMessage()
 const { isMobile } = useBasicLayout()
 const prompt = ref<string>('')
+const optimizePrompt = ref<string>('')
+const optimizePromptVisible = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const optimizeLoading = ref<boolean>(false)
 const midjourneySource = (): MidjourneyResponse => {
   return reactive({
     task_id: '',
@@ -33,8 +37,22 @@ const midjourneySource = (): MidjourneyResponse => {
 
 let midjourney: MidjourneyResponse = reactive(midjourneySource())
 
-function handleSubmit() {
+function handleSubmit(p: string) {
+  if (p) {
+    optimizePromptVisible.value = false
+    prompt.value = p
+  }
+
   onDraw()
+}
+async function handleOptimization() {
+  optimizeLoading.value = true
+  const data = await mjOptimize(prompt.value)
+  optimizeLoading.value = false
+  if (data?.data.text) {
+    optimizePrompt.value = data.data.text
+    optimizePromptVisible.value = true
+  }
 }
 async function onDraw() {
   try {
@@ -69,7 +87,12 @@ async function onDraw() {
         type="textarea"
         placeholder="输入你的创意，如：a cat"
       />
-      <NButton type="info" :disabled="prompt === ''" :loading="loading" @click="handleSubmit">
+      <NButton
+        type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleOptimization"
+      >
+        优化
+      </NButton>
+      <NButton type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleSubmit('')">
         生成
       </NButton>
     </div>
@@ -84,5 +107,11 @@ async function onDraw() {
         </template>
       </NSpin>
     </div>
+    <PromptOptimize
+      v-if="optimizePromptVisible"
+      :optimize-prompt="optimizePrompt"
+      @close="optimizePromptVisible = false"
+      @submit="handleSubmit($event)"
+    />
   </div>
 </template>
