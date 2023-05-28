@@ -8,7 +8,7 @@
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { NButton, NImage, NInput, NSpin, useMessage } from 'naive-ui'
+import { NButton, NImage, NInput, NSpin, NTooltip, useMessage } from 'naive-ui'
 import PromptOptimize from './components/PromptOptimize.vue'
 import Menu from '@/components/common/Menu/index.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -91,16 +91,26 @@ async function onDraw() {
       </div>
       <div class=" mx-auto">
         <div>
-          <NButton
-            type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleOptimization"
-          >
-            优化
-          </NButton>
+          <NTooltip trigger="hover">
+            <template #trigger>
+              <NButton
+                type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleOptimization"
+              >
+                优化
+              </NButton>
+            </template>
+            将你的提示词根据Midjourney的模型进行优化
+          </NTooltip>
         </div>
         <div class="mt-2">
-          <NButton type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleSubmit('')">
-            生成
-          </NButton>
+          <NTooltip trigger="hover">
+            <template #trigger>
+              <NButton type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleSubmit('')">
+                生成
+              </NButton>
+            </template>
+            根据你的提示词直接生成图片
+          </NTooltip>
         </div>
       </div>
     </div>
