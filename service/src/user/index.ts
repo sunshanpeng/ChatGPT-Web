@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Author: 孙善鹏
+ * @Date: 2023-05-27 09:53:06
+ * @LastEditTime: 2023-05-28 09:03:54
+ * @LastEditors: 孙善鹏
+ * @Reference:
+ */
 import { createConnection } from 'mysql2/promise'
 import bcrypt from 'bcryptjs'
 import { sign } from './jwt'
@@ -11,7 +19,7 @@ export enum UsageType {
 const db = createConnection({
   host: 'localhost',
   user: 'root',
-  password: '123456',
+  password: '12345678',
   database: 'chatgpt',
 })
 
