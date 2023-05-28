@@ -79,3 +79,10 @@ export function fetchDraw<T = any>(prompt: string) {
     data: { prompt },
   })
 }
+
+export function mjOptimize<T = any>(prompt: string) {
+  return post<T>({
+    url: '/mjOptimize',
+    data: { prompt },
+  })
+}

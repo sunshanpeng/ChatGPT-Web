@@ -118,6 +118,39 @@ async function chatReplyProcess(options: RequestOptions) {
   }
 }
 
+async function chatRequest(options: RequestOptions) {
+  const { message, lastContext, process, systemMessage, temperature, top_p } = options
+  try {
+    let options: SendMessageOptions = { timeoutMs }
+
+    if (apiModel === 'ChatGPTAPI') {
+      if (isNotEmptyString(systemMessage))
+        options.systemMessage = systemMessage
+      options.completionParams = { model, temperature, top_p }
+    }
+
+    if (lastContext != null) {
+      if (apiModel === 'ChatGPTAPI')
+        options.parentMessageId = lastContext.parentMessageId
+      else
+        options = { ...lastContext }
+    }
+
+    const response = await api.sendMessage(message, {
+      ...options,
+    })
+
+    return sendResponse({ type: 'Success', data: response })
+  }
+  catch (error: any) {
+    const code = error.statusCode
+    global.console.log(error)
+    if (Reflect.has(ErrorCodeMessage, code))
+      return sendResponse({ type: 'Fail', message: ErrorCodeMessage[code] })
+    return sendResponse({ type: 'Fail', message: error.message ?? 'Please check the back-end console' })
+  }
+}
+
 async function fetchUsage() {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY
   const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL
@@ -215,4 +248,4 @@ function currentModel(): ApiModel {
 
 export type { ChatContext, ChatMessage }
 
-export { chatReplyProcess, chatConfig, currentModel }
+export { chatReplyProcess, chatConfig, currentModel, chatRequest }

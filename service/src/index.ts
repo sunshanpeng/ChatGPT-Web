@@ -2,19 +2,20 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-13 18:48:46
- * @LastEditTime: 2023-05-14 17:23:03
+ * @LastEditTime: 2023-05-28 14:50:23
  * @LastEditors: 孙善鹏
  * @Reference:
  */
 import express from 'express'
 import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
-import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
+import { chatConfig, chatReplyProcess, chatRequest, currentModel } from './chatgpt'
 import { midjourneyRequest } from './midjourney'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { UsageType, incrUsage, login, promptRecord, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
+import { optimizePropmt } from './midjourney/types'
 
 const app = express()
 const router = express.Router()
@@ -63,6 +64,33 @@ router.post('/config', auth, async (req, res) => {
   }
   catch (error) {
     res.send(error)
+  }
+})
+router.post('/mjOptimize', auth, async (req, res) => {
+  res.setHeader('Content-type', 'application/json')
+  try {
+    const { prompt, options = {}, systemMessage, temperature, top_p } = req.body as RequestProps
+    if (!prompt)
+      throw new Error('{ type: \'Fail\', message: \'请输入正确的prompt\' }')
+    const startTime = new Date().getTime()
+    const response = await chatRequest({
+      message: optimizePropmt + prompt,
+      lastContext: options,
+      systemMessage,
+      temperature,
+      top_p,
+    })
+    const endTime = new Date().getTime()
+    const seconds = (endTime - startTime) / 1000
+    await promptRecord(req.user.username, UsageType.GPT3, prompt, seconds, JSON.stringify(response))
+    await incrUsage(req.user.username, UsageType.GPT3)
+    res.send(response)
+  }
+  catch (error) {
+    res.write(JSON.stringify(error.message || error))
+  }
+  finally {
+    res.end()
   }
 })
 
