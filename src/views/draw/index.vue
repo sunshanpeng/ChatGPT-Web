@@ -120,11 +120,13 @@ async function onDraw() {
         :src="midjourney.image_url"
         style="width: 100%; height: 100%; object-fit: cover;"
       />
-      <NSpin v-if="loading">
-        <template #description>
-          图片生成中，请稍后。。。
-        </template>
-      </NSpin>
+      <div v-if="loading" class="pt-40 mx-auto">
+        <NSpin>
+          <template #description>
+            图片生成中，请稍后。。。
+          </template>
+        </NSpin>
+      </div>
     </div>
     <PromptOptimize
       v-if="optimizePromptVisible"
