@@ -87,14 +87,20 @@ async function onDraw() {
         type="textarea"
         placeholder="输入你的创意，如：a cat"
       />
-      <NButton
-        type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleOptimization"
-      >
-        优化
-      </NButton>
-      <NButton type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleSubmit('')">
-        生成
-      </NButton>
+      <div class=" mx-auto">
+        <div>
+          <NButton
+            type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleOptimization"
+          >
+            优化
+          </NButton>
+        </div>
+        <div class="mt-2">
+          <NButton type="primary" :disabled="prompt === ''" :loading="optimizeLoading || loading" @click="handleSubmit('')">
+            生成
+          </NButton>
+        </div>
+      </div>
     </div>
     <div class="flex mt-5 w-1/4 mx-auto">
       <NImage
