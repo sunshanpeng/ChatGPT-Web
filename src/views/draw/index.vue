@@ -104,10 +104,11 @@ async function onDraw() {
         </div>
       </div>
     </div>
-    <div class="flex mt-5 w-1/4 mx-auto">
+    <div class="flex mt-5 w-full lg:w-5/6 mx-auto">
       <NImage
         v-if="midjourney.image_url"
         :src="midjourney.image_url"
+        style="width: 100%; height: 100%; object-fit: cover;"
       />
       <NSpin v-if="loading">
         <template #description>
