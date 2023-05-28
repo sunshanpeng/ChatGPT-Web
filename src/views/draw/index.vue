@@ -81,12 +81,14 @@ async function onDraw() {
   >
     <Menu />
     <div class="flex items-center">
-      <NInput
-        v-model:value="prompt"
-        class="mr-3"
-        type="textarea"
-        placeholder="输入你的创意，如：a cat"
-      />
+      <div class="md:w-11/12 w-10/12">
+        <NInput
+          v-model:value="prompt"
+          class="mr-3"
+          type="textarea"
+          placeholder="输入你的创意，如：a cat . 你也可以输入中文，然后点击优化来生成优秀的创意"
+        />
+      </div>
       <div class=" mx-auto">
         <div>
           <NButton
