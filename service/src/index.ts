@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-13 18:48:46
- * @LastEditTime: 2023-05-28 14:50:23
+ * @LastEditTime: 2023-05-29 22:45:31
  * @LastEditors: 孙善鹏
  * @Reference:
  */
@@ -16,6 +16,7 @@ import { limiter } from './middleware/limiter'
 import { UsageType, incrUsage, login, promptRecord, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
 import { optimizePropmt } from './midjourney/types'
+import { upload } from './utils/oss'
 
 const app = express()
 const router = express.Router()
@@ -119,6 +120,10 @@ router.post('/draw', auth, async (req, res) => {
   catch (error) {
     res.send({ status: 'Success', errorMessage: error.message, data: null })
   }
+})
+
+router.post('/upload', async (req, res) => {
+  upload()
 })
 
 router.post('/session', async (req, res) => {
