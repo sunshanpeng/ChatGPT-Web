@@ -2,13 +2,14 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 11:04:14
- * @LastEditTime: 2023-05-28 12:24:57
+ * @LastEditTime: 2023-05-30 22:04:35
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { NButton, NImage, NInput, NSpin, NTooltip, useMessage } from 'naive-ui'
+import { NButton, NImage, NInput, NSpin, NText, NTooltip, NUpload, NUploadDragger, useMessage } from 'naive-ui'
+import type { UploadFileInfo } from 'naive-ui'
 import PromptOptimize from './components/PromptOptimize.vue'
 import Menu from '@/components/common/Menu/index.vue'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
@@ -72,6 +73,23 @@ async function onDraw() {
     loading.value = false
   }
 }
+
+// 文件上传
+const previewFileList = ref<UploadFileInfo[]>([])
+const handleUploadFinish = ({
+  file,
+  event,
+}: {
+  file: UploadFileInfo
+  event?: ProgressEvent
+}) => {
+  console.log(event)
+  ms.success((event?.target as XMLHttpRequest).response)
+  const ext = file.name.split('.')[1]
+  file.name = `更名.${ext}`
+  file.url = '__HTTPS__://www.mocky.io/v2/5e4bafc63100007100d8b70f'
+  return file
+}
 </script>
 
 <template>
@@ -81,7 +99,23 @@ async function onDraw() {
   >
     <Menu />
     <div class="flex items-center">
-      <div class="md:w-11/12 w-10/12">
+      <div class="mr-2">
+        <NUpload
+          directory-dnd
+          action="api/upload"
+          :default-file-list="previewFileList"
+          :max="1"
+          list-type="image-card"
+          @finish="handleUploadFinish"
+        >
+          <NUploadDragger>
+            <NText style="font-size: 16px">
+              上传垫图（可选）
+            </NText>
+          </NUploadDragger>
+        </NUpload>
+      </div>
+      <div class="md:w-11/12 w-10/12 mr-2">
         <NInput
           v-model:value="prompt"
           class="mr-3"
@@ -89,7 +123,7 @@ async function onDraw() {
           placeholder="输入你的创意，如：a cat . 你也可以输入中文，然后点击优化来生成优秀的创意"
         />
       </div>
-      <div class=" mx-auto">
+      <div class="mx-auto">
         <div>
           <NTooltip trigger="hover">
             <template #trigger>
