@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 11:04:14
- * @LastEditTime: 2023-05-31 21:00:08
+ * @LastEditTime: 2023-05-31 21:14:33
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
@@ -59,7 +59,11 @@ async function onDraw() {
   try {
     loading.value = true
     midjourney = reactive(midjourneySource())
-    const data = await fetchDraw<MidjourneyResponse>(prompt.value)
+    let lastPrompt = prompt.value
+    if (imgUrl.value) {
+      lastPrompt = `${imgUrl.value} ${prompt.value}`
+    }
+    const data = await fetchDraw<MidjourneyResponse>(lastPrompt)
     if (data.errorMessage) {
       ms.error(data.errorMessage)
       return
@@ -112,6 +116,9 @@ const handleUploadFinish = ({
           :max="1"
           list-type="image-card"
           @finish="handleUploadFinish"
+          :on-remove="() => {
+            imgUrl = ''
+          }"
         >
           <NUploadDragger>
             <NText style="font-size: 16px">
