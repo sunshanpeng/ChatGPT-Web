@@ -2,11 +2,10 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-29 22:01:02
- * @LastEditTime: 2023-05-29 22:48:47
+ * @LastEditTime: 2023-05-31 20:43:59
  * @LastEditors: 孙善鹏
  * @Reference:
  */
-import * as path from 'path'
 import OSS from 'ali-oss'
 
 // oss-cn-hangzhou.aliyuncs.com
@@ -29,9 +28,9 @@ const headers = {
   'x-oss-forbid-overwrite': 'true',
 }
 
-export async function upload(): Promise<string> {
+export async function uploadToOss(file): Promise<string> {
   try {
-    const result = await client.put('exampleobject.txt', path.normalize('/Users/sunshanpeng/Documents/2023/05/1685180744161.png'), { headers })
+    const result = await client.put(file.filename, file.path, { headers })
     console.log(result)
     return result.url
   }

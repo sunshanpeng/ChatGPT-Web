@@ -2,11 +2,12 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-13 18:48:46
- * @LastEditTime: 2023-05-29 22:45:31
+ * @LastEditTime: 2023-05-31 20:53:51
  * @LastEditors: 孙善鹏
  * @Reference:
  */
 import express from 'express'
+import multer from 'multer'
 import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, chatRequest, currentModel } from './chatgpt'
@@ -16,10 +17,19 @@ import { limiter } from './middleware/limiter'
 import { UsageType, incrUsage, login, promptRecord, usageLimit } from './user'
 import { isNotEmptyString } from './utils/is'
 import { optimizePropmt } from './midjourney/types'
-import { upload } from './utils/oss'
+import { uploadToOss } from './utils/oss'
 
 const app = express()
 const router = express.Router()
+const storage = multer.diskStorage({
+  // destination(req, file, cb) {
+  //   cb(null, 'uploads/') // 指定文件的保存目录
+  // },
+  filename(req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`) // 给上传的文件重命名，避免重名
+  },
+})
+const upload = multer({ storage })
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -122,8 +132,15 @@ router.post('/draw', auth, async (req, res) => {
   }
 })
 
-router.post('/upload', async (req, res) => {
-  upload()
+router.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    const fileUrl = await uploadToOss(req.file)
+    res.send(fileUrl)
+  }
+  catch (err) {
+    console.log(err)
+    res.status(500).send('Error uploading file!')
+  }
 })
 
 router.post('/session', async (req, res) => {

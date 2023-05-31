@@ -2,7 +2,7 @@
  * @Description:
  * @Author: 孙善鹏
  * @Date: 2023-05-14 11:04:14
- * @LastEditTime: 2023-05-30 22:04:35
+ * @LastEditTime: 2023-05-31 21:00:08
  * @LastEditors: 孙善鹏
  * @Reference:
 -->
@@ -76,6 +76,7 @@ async function onDraw() {
 
 // 文件上传
 const previewFileList = ref<UploadFileInfo[]>([])
+const imgUrl = ref<string>('')
 const handleUploadFinish = ({
   file,
   event,
@@ -83,11 +84,15 @@ const handleUploadFinish = ({
   file: UploadFileInfo
   event?: ProgressEvent
 }) => {
+  debugger
   console.log(event)
-  ms.success((event?.target as XMLHttpRequest).response)
-  const ext = file.name.split('.')[1]
-  file.name = `更名.${ext}`
-  file.url = '__HTTPS__://www.mocky.io/v2/5e4bafc63100007100d8b70f'
+  const url = (event?.target as XMLHttpRequest)?.response as string
+  if (!url) {
+    ms.error('上传失败，请重新上传')
+    return
+  }
+  imgUrl.value = url
+  ms.success('上传成功')
   return file
 }
 </script>
